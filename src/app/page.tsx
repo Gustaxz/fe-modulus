@@ -44,21 +44,26 @@ export default function Home() {
 									{course.description}
 								</p>
 
-								<div className="mt-4 flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
-									<span>Ver detalhes</span>
-									<svg
-										className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M9 5l7 7-7 7"
-										/>
-									</svg>
+								<div className="mt-4 flex items-center justify-between">
+									<span className="text-sm text-gray-500 dark:text-gray-400">
+										{course.lessons.length} {course.lessons.length === 1 ? "lição" : "lições"}
+									</span>
+									<div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+										<span>Ver detalhes</span>
+										<svg
+											className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M9 5l7 7-7 7"
+											/>
+										</svg>
+									</div>
 								</div>
 							</div>
 						</Link>

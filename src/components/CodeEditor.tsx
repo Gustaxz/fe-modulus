@@ -6,9 +6,14 @@ import { useEffect, useRef, useState } from "react";
 interface CodeEditorProps {
 	initialFiles: Record<string, string>;
 	storageKey: string;
+	preserveProgress?: boolean;
 }
 
-export default function CodeEditor({ initialFiles, storageKey }: CodeEditorProps) {
+export default function CodeEditor({
+	initialFiles,
+	storageKey,
+	preserveProgress = false,
+}: CodeEditorProps) {
 	const [files, setFiles] = useState<Record<string, string>>(initialFiles);
 	const [activeFile, setActiveFile] = useState<string>(Object.keys(initialFiles)[0] || "index.js");
 	const [output, setOutput] = useState<string>("");
@@ -21,12 +26,24 @@ export default function CodeEditor({ initialFiles, storageKey }: CodeEditorProps
 		if (saved) {
 			try {
 				const savedFiles = JSON.parse(saved);
-				setFiles(savedFiles);
+				if (preserveProgress) {
+					// Para seção do usuário, manter código existente e apenas adicionar novos arquivos
+					const mergedFiles = { ...initialFiles };
+					Object.keys(savedFiles).forEach((key) => {
+						if (savedFiles[key].trim() !== "") {
+							mergedFiles[key] = savedFiles[key];
+						}
+					});
+					setFiles(mergedFiles);
+				} else {
+					// Para exemplos, sempre usar código salvo se existir
+					setFiles(savedFiles);
+				}
 			} catch (error) {
 				console.error("Error loading saved files:", error);
 			}
 		}
-	}, [storageKey]);
+	}, [storageKey, preserveProgress, initialFiles]);
 
 	// Salvar no localStorage quando files mudarem
 	useEffect(() => {

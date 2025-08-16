@@ -1,4 +1,5 @@
 import CodeEditor from "@/components/CodeEditor";
+import LessonNavigation from "@/components/LessonNavigation";
 import ThemeToggle from "@/components/ThemeToggle";
 import fs from "fs";
 import { notFound } from "next/navigation";
@@ -8,6 +9,7 @@ import { courses } from "../../../../data/courses";
 
 interface CoursePageProps {
 	params: Promise<{ id: string }>;
+	searchParams: Promise<{ lesson?: string }>;
 }
 
 export async function generateStaticParams() {
@@ -16,9 +18,9 @@ export async function generateStaticParams() {
 	}));
 }
 
-async function getMarkdownContent(id: string): Promise<string> {
+async function getMarkdownContent(courseId: string, lessonId: string): Promise<string> {
 	try {
-		const filePath = path.join(process.cwd(), "data/lessons", `${id}.md`);
+		const filePath = path.join(process.cwd(), "data/lessons", courseId, `${lessonId}.md`);
 		const content = fs.readFileSync(filePath, "utf-8");
 		return content;
 	} catch (error) {
@@ -27,31 +29,34 @@ async function getMarkdownContent(id: string): Promise<string> {
 	}
 }
 
-export default async function CoursePage({ params }: CoursePageProps) {
+export default async function CoursePage({ params, searchParams }: CoursePageProps) {
 	const { id } = await params;
+	const { lesson } = await searchParams;
 
 	const course = courses.find((c) => c.id === id);
 	if (!course) {
 		notFound();
 	}
 
-	const markdownContent = await getMarkdownContent(id);
+	// Determinar lição atual (primeira se não especificada)
+	const currentLessonId = lesson || course.lessons[0]?.id;
+	const currentLesson = course.lessons.find((l) => l.id === currentLessonId);
 
-	// Código de exemplo pré-carregado
-	const exampleCode = {
+	if (!currentLesson) {
+		notFound();
+	}
+
+	const markdownContent = await getMarkdownContent(id, currentLessonId);
+
+	// Usar código da lição específica ou fallback para código padrão
+	const exampleCode = currentLesson.exampleCode || {
 		"index.js": `const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 ctx.fillStyle = "red";
-ctx.fillRect(20, 20, 100, 100);
-
-// Adicione mais código aqui
-ctx.fillStyle = "blue";
-ctx.beginPath();
-ctx.arc(100, 100, 30, 0, Math.PI * 2);
-ctx.fill();`,
+ctx.fillRect(20, 20, 100, 100);`,
 	};
 
-	const userCode = {
+	const userCode = currentLesson.userCodeTemplate || {
 		"index.js": `// Escreva seu código aqui
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -67,7 +72,12 @@ const ctx = canvas.getContext("2d");
 					<div className="flex items-center justify-between">
 						<div>
 							<h1 className="text-2xl font-bold text-gray-900 dark:text-white">{course.title}</h1>
-							<p className="text-gray-600 dark:text-gray-300 mt-1">{course.description}</p>
+							<h2 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
+								{currentLesson.title}
+							</h2>
+							<p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
+								{currentLesson.description}
+							</p>
 						</div>
 						<div className="flex items-center gap-4">
 							<ThemeToggle />
@@ -79,8 +89,107 @@ const ctx = canvas.getContext("2d");
 							</a>
 						</div>
 					</div>
+
+					{/* Indicador de Progresso */}
+					<div className="mt-4">
+						<div className="flex items-center justify-between mb-2">
+							<span className="text-sm text-gray-600 dark:text-gray-400">
+								Etapa {course.lessons.findIndex((l) => l.id === currentLessonId) + 1} de{" "}
+								{course.lessons.length}
+							</span>
+							<span className="text-sm text-gray-600 dark:text-gray-400">
+								{Math.round(
+									((course.lessons.findIndex((l) => l.id === currentLessonId) + 1) /
+										course.lessons.length) *
+										100
+								)}
+								%
+							</span>
+						</div>
+						<div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+							<div
+								className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+								style={{
+									width: `${
+										((course.lessons.findIndex((l) => l.id === currentLessonId) + 1) /
+											course.lessons.length) *
+										100
+									}%`,
+								}}
+							></div>
+						</div>
+					</div>
 				</div>
 			</header>
+
+			{/* Navegação entre Lições */}
+			<nav className="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+				<div className="container mx-auto px-4 py-3">
+					<div className="flex items-center justify-between">
+						<div className="flex-1 flex justify-start">
+							{course.lessons.findIndex((l) => l.id === currentLessonId) > 0 && (
+								<a
+									href={`/curso/${id}?lesson=${
+										course.lessons[course.lessons.findIndex((l) => l.id === currentLessonId) - 1].id
+									}`}
+									className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+								>
+									<svg
+										className="w-4 h-4 mr-2"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M15 19l-7-7 7-7"
+										/>
+									</svg>
+									Anterior
+								</a>
+							)}
+						</div>
+
+						{/* Dropdown de Lições */}
+						<div className="flex-1 flex justify-center">
+							<LessonNavigation
+								courseId={id}
+								lessons={course.lessons}
+								currentLessonId={currentLessonId}
+							/>
+						</div>
+
+						<div className="flex-1 flex justify-end">
+							{course.lessons.findIndex((l) => l.id === currentLessonId) <
+								course.lessons.length - 1 && (
+								<a
+									href={`/curso/${id}?lesson=${
+										course.lessons[course.lessons.findIndex((l) => l.id === currentLessonId) + 1].id
+									}`}
+									className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+								>
+									Próxima
+									<svg
+										className="w-4 h-4 ml-2"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M9 5l7 7-7 7"
+										/>
+									</svg>
+								</a>
+							)}
+						</div>
+					</div>
+				</div>
+			</nav>
 
 			<div className="container mx-auto px-4 py-8">
 				{/* Seção de Markdown */}
@@ -113,7 +222,10 @@ const ctx = canvas.getContext("2d");
 							</div>
 							Exemplo Prático
 						</h2>
-						<CodeEditor initialFiles={exampleCode} storageKey={`example-${id}`} />
+						<CodeEditor
+							initialFiles={exampleCode}
+							storageKey={`example-${id}-${currentLessonId}`}
+						/>
 					</div>
 				</section>
 
@@ -137,8 +249,11 @@ const ctx = canvas.getContext("2d");
 								</svg>
 							</div>
 							Seu Código
+							<span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-auto">
+								Progresso salvo automaticamente
+							</span>
 						</h2>
-						<CodeEditor initialFiles={userCode} storageKey={`user-${id}`} />
+						<CodeEditor initialFiles={userCode} storageKey={`user-${id}`} preserveProgress={true} />
 					</div>
 				</section>
 			</div>
