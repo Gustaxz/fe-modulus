@@ -1,26 +1,167 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #ffffff;
+	--foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos para markdown */
+.markdown-content {
+	line-height: 1.75;
+}
+
+.markdown-content h1 {
+	font-size: 2.25rem;
+	font-weight: 800;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+	color: #111827;
+}
+
+.markdown-content h2 {
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin-top: 1.5rem;
+	margin-bottom: 0.75rem;
+	color: #111827;
+}
+
+.markdown-content h3 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-top: 1.25rem;
+	margin-bottom: 0.5rem;
+	color: #111827;
+}
+
+.markdown-content p {
+	margin-bottom: 1rem;
+	color: #374151;
+}
+
+.markdown-content strong {
+	font-weight: 600;
+	color: #111827;
+}
+
+.markdown-content em {
+	font-style: italic;
+}
+
+.markdown-content code {
+	background-color: #f3f4f6;
+	color: #ec4899;
+	padding: 0.125rem 0.25rem;
+	border-radius: 0.25rem;
+	font-size: 0.875rem;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
+		monospace;
+}
+
+.markdown-content pre {
+	background-color: #1f2937;
+	color: #f9fafb;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	overflow-x: auto;
+	margin: 1rem 0;
+}
+
+.markdown-content pre code {
+	background-color: transparent;
+	color: inherit;
+	padding: 0;
+	border-radius: 0;
+	font-size: inherit;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+	margin: 1rem 0;
+	padding-left: 1.5rem;
+}
+
+.markdown-content li {
+	margin-bottom: 0.5rem;
+}
+
+.markdown-content blockquote {
+	border-left: 4px solid #d1d5db;
+	padding-left: 1rem;
+	margin: 1rem 0;
+	font-style: italic;
+	color: #6b7280;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+	.markdown-content h1,
+	.markdown-content h2,
+	.markdown-content h3,
+	.markdown-content strong {
+		color: #f9fafb;
+	}
+
+	.markdown-content p {
+		color: #d1d5db;
+	}
+
+	.markdown-content code {
+		background-color: #374151;
+		color: #f472b6;
+	}
+
+	.markdown-content pre {
+		background-color: #111827;
+	}
+
+	.markdown-content blockquote {
+		border-left-color: #4b5563;
+		color: #9ca3af;
+	}
+}
+
+.dark .markdown-content h1,
+.dark .markdown-content h2,
+.dark .markdown-content h3,
+.dark .markdown-content strong {
+	color: #f9fafb;
+}
+
+.dark .markdown-content p {
+	color: #d1d5db;
+}
+
+.dark .markdown-content code {
+	background-color: #374151;
+	color: #f472b6;
+}
+
+.dark .markdown-content pre {
+	background-color: #111827;
+}
+
+.dark .markdown-content blockquote {
+	border-left-color: #4b5563;
+	color: #9ca3af;
 }
