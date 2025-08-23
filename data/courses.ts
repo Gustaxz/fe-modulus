@@ -61,36 +61,56 @@ const ctx = canvas.getContext("2d");
         }
       },
       {
-        id: "02-formas-geometricas",
-        title: "Formas Geométricas",
-        description: "Explore diferentes métodos para desenhar formas geométricas",
+        id: "02-cores",
+        title: "Adicionando cores e quantidade",
+        description: "Agora teremos mais quadrados e variações de cores",
         exampleCode: {
-          'index.js': `const canvas = document.getElementById("myCanvas");
-const ctx = canvas.getContext("2d");
+          'index.js': `function updateFetti(ctx, x, y, scalar, color) {
+  ctx.fillStyle = color;
 
-// Triângulo
-ctx.fillStyle = "green";
-ctx.beginPath();
-ctx.moveTo(50, 50);
-ctx.lineTo(100, 50);
-ctx.lineTo(75, 100);
-ctx.closePath();
-ctx.fill();
+  ctx.beginPath();
 
-// Linha com estilo
-ctx.strokeStyle = "purple";
-ctx.lineWidth = 3;
-ctx.beginPath();
-ctx.moveTo(150, 50);
-ctx.lineTo(250, 100);
-ctx.stroke();
+  ctx.moveTo(x, y);
 
-// Retângulo com borda
-ctx.fillStyle = "orange";
-ctx.strokeStyle = "black";
-ctx.lineWidth = 2;
-ctx.fillRect(300, 50, 80, 60);
-ctx.strokeRect(300, 50, 80, 60);`
+  ctx.lineTo(x, y + scalar);
+  ctx.lineTo(x + scalar, y + scalar);
+  ctx.lineTo(x + scalar, y);
+
+  ctx.closePath();
+  ctx.fill();
+}
+
+function confetti({ scalar = 10, particleCount = 10 } = {}) {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const origin = {
+    x: 0.5,
+    y: 0.5,
+  }
+
+  const colors = [
+      "#26ccff",
+      "#a25afd",
+      "#ff5e7e",
+      "#88ff5a",
+      "#fcff42",
+      "#ffa62d",
+      "#ff36ff",
+    ]
+
+  const startX = canvas.width * origin.x;
+  const startY = canvas.height * origin.y;
+
+
+  for (let i = 0; i < particleCount; i++) {
+    updateFetti(ctx, startX, startY - (i * scalar), scalar, colors[Math.floor(Math.random() * colors.length)])
+  }
+
+
+}
+
+confetti();`
         },
         userCodeTemplate: {
           'index.js': `// Pratique desenhar diferentes formas
@@ -101,33 +121,87 @@ const ctx = canvas.getContext("2d");
         }
       },
       {
-        id: "03-cores-estilos",
-        title: "Cores e Estilos",
-        description: "Aprenda a usar cores, gradientes e padrões",
+        id: "03-ticks",
+        title: "Nem tudo dura para sempre!",
+        description: "Como os quadrados se desfazem com o passar do tempo?",
         exampleCode: {
-          'index.js': `const canvas = document.getElementById("myCanvas");
-const ctx = canvas.getContext("2d");
+          'index.js': `function updateFetti(ctx, fetti) {
+  const { x, y, scalar, color, totalTicks } = fetti
 
-// Gradiente linear
-const gradient = ctx.createLinearGradient(0, 0, 200, 0);
-gradient.addColorStop(0, "red");
-gradient.addColorStop(0.5, "yellow");
-gradient.addColorStop(1, "blue");
+  const progress = fetti.tick / totalTicks;
+  const opacity = 1 - progress;
+  ctx.fillStyle = \`\${color}\${Math.floor(opacity * 255).toString(16).padStart(2, '0')}\`;
 
-ctx.fillStyle = gradient;
-ctx.fillRect(20, 20, 200, 100);
+  ctx.beginPath();
 
-// Sombra
-ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-ctx.shadowOffsetX = 5;
-ctx.shadowOffsetY = 5;
-ctx.shadowBlur = 10;
 
-ctx.fillStyle = "lime";
-ctx.fillRect(250, 20, 100, 100);
+  ctx.moveTo(x, y);
 
-// Resetar sombra
-ctx.shadowColor = "transparent";`
+  ctx.lineTo(x, y + scalar);
+  ctx.lineTo(x + scalar, y + scalar);
+  ctx.lineTo(x + scalar, y);
+
+  ctx.closePath();
+  ctx.fill();
+
+  fetti.tick++
+  return fetti.tick < totalTicks
+}
+
+function update(ctx, fettis, onDone) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+  const remainingFettis = fettis.filter(fetti => updateFetti(ctx, fetti));
+
+
+  if (remainingFettis.length === 0) {
+    onDone();
+  } else {
+    requestAnimationFrame(() => update(ctx, remainingFettis, onDone));
+  }
+}
+
+function confetti({ scalar = 10, particleCount = 10, ticks = 200 } = {}) {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const origin = {
+    x: 0.5,
+    y: 0.5,
+  }
+
+  const colors = [
+    "#26ccff",
+    "#a25afd",
+    "#ff5e7e",
+    "#88ff5a",
+    "#fcff42",
+    "#ffa62d",
+    "#ff36ff",
+  ]
+
+  const startX = canvas.width * origin.x;
+  const startY = canvas.height * origin.y;
+
+  const fettiArray = []
+  for (let i = 0; i < particleCount; i++) {
+    fettiArray.push({
+      x: startX,
+      y: startY - (i * scalar),
+      scalar,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tick: 0,
+      totalTicks: ticks
+    })
+  }
+
+  update(ctx, fettiArray, () => {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+  });
+}
+
+confetti();`
         },
         userCodeTemplate: {
           'index.js': `// Experimente com cores e estilos
