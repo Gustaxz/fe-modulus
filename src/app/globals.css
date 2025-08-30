@@ -68,6 +68,11 @@ body {
 	font-style: italic;
 }
 
+.markdown-content a {
+	color: #4287f5;
+	text-decoration: underline;
+}
+
 .markdown-content code {
 	background-color: #f3f4f6;
 	color: #ec4899;

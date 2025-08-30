@@ -5,6 +5,7 @@ import fs from "fs";
 import { notFound } from "next/navigation";
 import path from "path";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import { courses } from "../../../../data/courses";
 
 interface CoursePageProps {
@@ -196,7 +197,16 @@ const ctx = canvas.getContext("2d");
 				<section className="mb-12">
 					<div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
 						<div className="markdown-content">
-							<ReactMarkdown>{markdownContent}</ReactMarkdown>
+							<ReactMarkdown
+								rehypePlugins={[rehypeRaw]}
+								components={{
+									a: ({ node, ...props }) => (
+										<a {...props} target="_blank" rel="noopener noreferrer" />
+									),
+								}}
+							>
+								{markdownContent}
+							</ReactMarkdown>
 						</div>
 					</div>
 				</section>
