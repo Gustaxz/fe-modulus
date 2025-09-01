@@ -1,4 +1,4 @@
-# Cores e Qunatidade!
+# Cores e Quantidade!
 
 Agora que você conhece o básico do Canvas,  podemos adicionar mais variações para chegarmos ao confetti.
 

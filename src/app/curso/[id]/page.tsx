@@ -1,6 +1,5 @@
 import CodeEditor from "@/components/CodeEditor";
 import LessonNavigation from "@/components/LessonNavigation";
-import ThemeToggle from "@/components/ThemeToggle";
 import fs from "fs";
 import { notFound } from "next/navigation";
 import path from "path";
@@ -81,7 +80,7 @@ const ctx = canvas.getContext("2d");
 							</p>
 						</div>
 						<div className="flex items-center gap-4">
-							<ThemeToggle />
+							{/* <ThemeToggle /> */}
 							<a
 								href="/"
 								className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
