@@ -49,7 +49,7 @@ Se consideramos que `Math.random()` retorna um valor entre 0 e 1, caso o valor r
 
 Num círculo, ficaria como na imagem abaixo:
 
-![Angulo 2D](/physics-1.jpeg)
+![Angulo 2D](/canvas-confetti/physics-1.jpeg)
 
 #### OBS: Deveríamos estar usando radianos, mas para facilitar a visualização, estamos usando graus. Além disso, o grau resultante é negativo, na imagem está sendo representado como positivo para também facilitar a visualização. Existe um motivo para o grau ficar negativo, mas vamos ver isso mais tarde.
 <br />
@@ -59,7 +59,7 @@ Agora, se considerarmos que `Math.random()` retorna o valor `1`, teremos o segui
 
 `angle2d = -90 + (35 - 70 * 1) = -125`
 
-![Angulo 2D](/physics-2.jpeg)
+![Angulo 2D](/canvas-confetti/physics-2.jpeg)
 
 #### OBS: A posição do ângulo na imagem não está exatamente correta, mas é novamente para facilitar a visualização.
 <br />
@@ -67,7 +67,7 @@ Agora, se considerarmos que `Math.random()` retorna o valor `1`, teremos o segui
 
 Ou seja, esse cálculo garante que o confetti seja espalhado em um ângulo de 70 graus, com o valor de `Math.random()` decidindo em que posição entre esses dois pontos representados o confetti vai estar, sendo representado na área abaixo:
 
-![Angulo 2D](/physics-3.jpeg)
+![Angulo 2D](/canvas-confetti/physics-3.jpeg)
 
 Para que o efeito de espalhamento seja aplicado, precisamos multiplicar o `angle2d` pela velocidade dentro de `updateFetti`. Para `x` usamos o cosseno, já que este é o responsável por nos dar o valor do eixo `x` de um ângulo. Já para `y` usamos o seno, pois este é o responsável por nos dar o valor do eixo `y` de um ângulo. Essas contas definirão a posição do confetti de acordo com o ângulo e `spread` passados.
 
@@ -75,7 +75,7 @@ Para que o efeito de espalhamento seja aplicado, precisamos multiplicar o `angle
 
 Considerando a posição dos ângulos de acordo com seus valores no cálculo do `angle2d`, temos o seguinte resultado:
 
-![Angulo 2D](/physics-4.jpeg)
+![Angulo 2D](/canvas-confetti/physics-4.jpeg)
 
 A explicação para o ângulo estar invertido está no canvas. Quanto maior o valor de `y`, mais para baixo está no canvas. Dentro da `updateFetti` somamaos novos valores ao `y` para que o confetti faça o efeito de "cair".
 

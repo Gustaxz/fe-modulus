@@ -2,7 +2,7 @@
 
 Seja bem vindo ao curso de Canvas Confetti! Ao final das etapas, você deve ser capaz de recriar o efeito de canhão de uma versão simples da biblioteca Canvas Confetti:
 
-<img src="/square-1.gif" alt="Canvas Confetti" width="500">
+<img src="/canvas-confetti/square-1.gif" alt="Canvas Confetti" width="500">
 <br />
 
 Esse curso possui 5 etapas, cada uma cobrindo um aspecto diferente do efeito de confete. Além disso, tentamos seguir a mesma estrutura da biblioteca original, para que ao final facilite entender até mesmo o código da biblioteca original.

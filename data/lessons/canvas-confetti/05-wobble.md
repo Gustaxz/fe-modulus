@@ -8,7 +8,7 @@ Primeiramente, rode o exemplo prático desta etapa para ver o novo efeito para o
 
 Se reparar o que é exatamente esse efeito, podemos ver que ele é uma espécie de movimento de rotação, alterando constantemente a forma de cada quadrado.
 
-<img src="/wobble-1.gif" alt="Wobble" width="300">
+<img src="/canvas-confetti/wobble-1.gif" alt="Wobble" width="300">
 <br />
 
 Para o efeito de rotação, precisamos novamente da nossa velha amiga trigonometria. Temos um `wobble` inicial, que é como se fosse um ângulo, calculado juntamente por um `Math.random()` (dentro da `randomPhysics`) para garantir que cada confetti tenha um `wobble` diferente. O `wobbleSpeed` é um valor que determina a velocidade de rotação do confetti ou o quanto o ângulo `wobble` vai aumentar entre uma atualização e outra.
