@@ -209,28 +209,26 @@ export default function CodeEditor({
 			<div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-600">
 				<div className="flex space-x-1 pb-2">
 					{fileNames.map((filename) => (
-						<button
-							key={filename}
-							onClick={() => setActiveFile(filename)}
-							className={`px-3 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-								activeFile === filename
-									? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-b-2 border-blue-500"
-									: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-							}`}
-						>
-							{filename}
+						<div key={filename} className="relative flex items-center">
+							<button
+								onClick={() => setActiveFile(filename)}
+								className={`px-3 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+									activeFile === filename
+										? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-b-2 border-blue-500"
+										: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+								} ${fileNames.length > 1 ? "pr-8" : ""}`}
+							>
+								{filename}
+							</button>
 							{fileNames.length > 1 && (
 								<button
-									onClick={(e) => {
-										e.stopPropagation();
-										deleteFile(filename);
-									}}
-									className="ml-2 text-red-500 hover:text-red-700"
+									onClick={() => deleteFile(filename)}
+									className="absolute right-1 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900 rounded text-xs"
 								>
 									×
 								</button>
 							)}
-						</button>
+						</div>
 					))}
 					<button
 						onClick={addNewFile}
