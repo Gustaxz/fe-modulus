@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 interface LessonFiles {
   exampleCode: Record<string, string>;
   userCodeTemplate: Record<string, string>;
+  htmlTemplate: string;
 }
 
 export function useLessonFiles(courseId: string, lessonId: string) {
   const [files, setFiles] = useState<LessonFiles>({
     exampleCode: {},
-    userCodeTemplate: {}
+    userCodeTemplate: {},
+    htmlTemplate: ''
   });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

@@ -7,12 +7,14 @@ interface CodeEditorProps {
 	initialFiles: Record<string, string>;
 	storageKey: string;
 	preserveProgress?: boolean;
+	htmlTemplate?: string;
 }
 
 export default function CodeEditor({
 	initialFiles,
 	storageKey,
 	preserveProgress = false,
+	htmlTemplate = "",
 }: CodeEditorProps) {
 	const [files, setFiles] = useState<Record<string, string>>(initialFiles);
 	const [activeFile, setActiveFile] = useState<string>(Object.keys(initialFiles)[0] || "index.js");
@@ -210,9 +212,14 @@ export default function CodeEditor({
 			.map(([, content]) => content)
 			.join("\n\n");
 
-		// HTML template com Canvas
-		const htmlContent = `
-<!DOCTYPE html>
+		// Use HTML template from course or fallback to default
+		console.log("HTML Template received:", htmlTemplate ? "YES" : "NO");
+		console.log("HTML Template length:", htmlTemplate.length);
+		let htmlContent = htmlTemplate;
+
+		if (!htmlContent) {
+			// Fallback HTML template if none provided
+			htmlContent = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -240,17 +247,6 @@ export default function CodeEditor({
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 14px;
         }
-        .console-output {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            border-radius: 6px;
-            margin: 10px 0;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 14px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
     </style>
 </head>
 <body>
@@ -258,51 +254,33 @@ export default function CodeEditor({
     <div id="console"></div>
     
     <script>
-        // Capturar console.log
+        // Basic console capture
         const consoleDiv = document.getElementById('console');
         const originalLog = console.log;
-        const originalError = console.error;
         
         console.log = function(...args) {
-            const message = args.map(arg => 
-                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-            ).join(' ');
-            
+            const message = args.map(arg => String(arg)).join(' ');
             const logDiv = document.createElement('div');
             logDiv.textContent = '> ' + message;
-            logDiv.style.marginBottom = '5px';
             consoleDiv.appendChild(logDiv);
-            
             originalLog.apply(console, args);
         };
         
-        console.error = function(...args) {
-            const message = args.map(arg => String(arg)).join(' ');
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.textContent = 'Error: ' + message;
-            consoleDiv.appendChild(errorDiv);
-            
-            originalError.apply(console, args);
-        };
-        
-        // Capturar erros JavaScript
-        window.onerror = function(message, source, lineno, colno, error) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.textContent = \`Error (line \${lineno}): \${message}\`;
-            consoleDiv.appendChild(errorDiv);
-            return true;
-        };
-        
         try {
-            ${combinedCode}
+            /* USER_CODE_PLACEHOLDER */
         } catch (error) {
             console.error(error.message);
         }
     </script>
 </body>
 </html>`;
+		}
+
+		// Replace the placeholder with actual user code
+		console.log("Before replacement:", htmlContent.includes("/* USER_CODE_PLACEHOLDER */"));
+		console.log("Combined code:", combinedCode);
+		htmlContent = htmlContent.replace("/* USER_CODE_PLACEHOLDER */", combinedCode);
+		console.log("After replacement:", htmlContent.includes("/* USER_CODE_PLACEHOLDER */"));
 
 		// Injetar no iframe
 		if (iframeRef.current) {

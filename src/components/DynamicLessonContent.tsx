@@ -125,7 +125,11 @@ const ctx = canvas.getContext("2d");
 							</div>
 						)}
 					</h2>
-					<CodeEditor initialFiles={exampleCode} storageKey={`example-${courseId}-${lessonId}`} />
+					<CodeEditor
+						initialFiles={exampleCode}
+						storageKey={`example-${courseId}-${lessonId}`}
+						htmlTemplate={files.htmlTemplate}
+					/>
 				</div>
 			</section>
 
@@ -175,6 +179,7 @@ const ctx = canvas.getContext("2d");
 						initialFiles={userCode}
 						storageKey={`user-${courseId}`}
 						preserveProgress={true}
+						htmlTemplate={files.htmlTemplate}
 					/>
 				</div>
 			</section>
