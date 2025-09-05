@@ -173,7 +173,7 @@ const ctx = canvas.getContext("2d");
 					</h2>
 					<CodeEditor
 						initialFiles={userCode}
-						storageKey={`user-${courseId}-${lessonId}`}
+						storageKey={`user-${courseId}`}
 						preserveProgress={true}
 					/>
 				</div>

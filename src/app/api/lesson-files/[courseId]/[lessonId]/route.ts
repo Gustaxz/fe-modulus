@@ -20,18 +20,31 @@ export async function GET(
     const exampleCode: Record<string, string> = {};
     const userCodeTemplate: Record<string, string> = {};
 
+    // Load lesson-specific example files
     for (const file of files) {
       const filePath = path.join(lessonDir, file);
       const content = fs.readFileSync(filePath, 'utf-8');
 
-      if (file.endsWith('.template.js')) {
-        // Template files: remove .template suffix for display name
-        const displayName = file.replace('.template.js', '.js');
-        userCodeTemplate[displayName] = content;
-      } else {
+      if (!file.endsWith('.template.js')) {
         // Regular files: use exact filename as display name
         exampleCode[file] = content;
       }
+    }
+
+    // Load course-level template (single template for all lessons)
+    const courseDir = path.join(process.cwd(), 'data', 'lessons', courseId);
+    const courseTemplateFile = path.join(courseDir, 'index.template.js');
+
+    if (fs.existsSync(courseTemplateFile)) {
+      const templateContent = fs.readFileSync(courseTemplateFile, 'utf-8');
+      userCodeTemplate['index.js'] = templateContent;
+    } else {
+      // Fallback template if course template doesn't exist
+      userCodeTemplate['index.js'] = `// ${courseId} - Workspace
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+// Escreva seu código aqui...`;
     }
 
     // Add cache headers to prevent aggressive caching in development

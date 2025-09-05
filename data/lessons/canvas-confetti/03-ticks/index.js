@@ -1,4 +1,4 @@
-function ypdateFetti(ctx, fetti) {
+function updateFetti(ctx, fetti) {
 	const { x, y, scalar, color, totalTicks } = fetti;
 
 	const progress = fetti.tick / totalTicks;
