@@ -20,41 +20,91 @@ export default function CodeEditor({
 	const [isRunning, setIsRunning] = useState(false);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
 
-	// Carregar do localStorage na inicialização
+	// Estado para controlar se devemos salvar (apenas após mudanças do usuário)
+	const [hasUserChanges, setHasUserChanges] = useState(false);
+	const [isInitialized, setIsInitialized] = useState(false);
+
+	// Extrair courseId e lessonId do storageKey para criar chave por curso
+	const courseKey = storageKey.replace(/^(user|example)-/, "").replace(/-[^-]+$/, ""); // ex: "canvas-confetti"
+	const lessonId = storageKey.split("-").pop() || "unknown"; // ex: "03-ticks"
+	const courseStorageKey = preserveProgress ? `user-course-${courseKey}` : storageKey;
+
+	// Carregar arquivos salvos ou iniciais apenas uma vez
 	useEffect(() => {
-		const saved = localStorage.getItem(storageKey);
-		if (saved) {
-			try {
-				const savedFiles = JSON.parse(saved);
-				if (preserveProgress) {
-					// Para seção do usuário, manter código existente e apenas adicionar novos arquivos
-					const mergedFiles = { ...initialFiles };
-					Object.keys(savedFiles).forEach((key) => {
-						if (savedFiles[key].trim() !== "") {
-							mergedFiles[key] = savedFiles[key];
-						}
-					});
-					setFiles(mergedFiles);
-				} else {
-					// Para exemplos, sempre usar código salvo se existir
-					setFiles(savedFiles);
+		if (isInitialized) return;
+
+		// console.log(`[${courseStorageKey}] Loading files for lesson ${lessonId}. preserveProgress:`, preserveProgress);
+
+		if (preserveProgress) {
+			// Para seção do usuário, tentar carregar do localStorage do curso
+			const saved = localStorage.getItem(courseStorageKey);
+			if (saved) {
+				try {
+					const savedCourseData = JSON.parse(saved);
+					const savedLessonFiles = savedCourseData[lessonId];
+
+					if (savedLessonFiles && Object.keys(savedLessonFiles).length > 0) {
+						// console.log(`[${courseStorageKey}] Using saved files for lesson ${lessonId}:`, Object.keys(savedLessonFiles));
+						setFiles(savedLessonFiles);
+						setIsInitialized(true);
+						return;
+					}
+				} catch (error) {
+					console.error("Error loading saved course data:", error);
 				}
-			} catch (error) {
-				console.error("Error loading saved files:", error);
 			}
 		}
-	}, [storageKey, preserveProgress, initialFiles]);
 
-	// Salvar no localStorage quando files mudarem
+		// Para seção de exemplos ou se não há arquivos salvos, usar initialFiles
+		if (Object.keys(initialFiles).length > 0) {
+			// console.log(`[${courseStorageKey}] Using initial files for lesson ${lessonId}:`, Object.keys(initialFiles));
+			setFiles(initialFiles);
+		}
+
+		setIsInitialized(true);
+	}, [courseStorageKey, lessonId, preserveProgress, initialFiles, isInitialized]);
+
+	// Atualizar para novos initialFiles apenas para seções sem preserveProgress
 	useEffect(() => {
-		localStorage.setItem(storageKey, JSON.stringify(files));
-	}, [files, storageKey]);
+		if (!preserveProgress && isInitialized && Object.keys(initialFiles).length > 0) {
+			// console.log(`[${courseStorageKey}] Updating to fresh initialFiles for lesson ${lessonId}`);
+			setFiles(initialFiles);
+		}
+	}, [initialFiles, preserveProgress, courseStorageKey, lessonId, isInitialized]);
+
+	// Salvar no localStorage apenas quando há mudanças do usuário (debounced)
+	useEffect(() => {
+		if (!preserveProgress || !hasUserChanges || !isInitialized) return;
+
+		const timeoutId = setTimeout(() => {
+			try {
+				// Carregar dados existentes do curso
+				const existingData = localStorage.getItem(courseStorageKey);
+				const courseData = existingData ? JSON.parse(existingData) : {};
+
+				// Atualizar apenas esta lição
+				courseData[lessonId] = files;
+
+				// console.log(`[${courseStorageKey}] Saving user changes for lesson ${lessonId}:`, Object.keys(files));
+				localStorage.setItem(courseStorageKey, JSON.stringify(courseData));
+				setHasUserChanges(false);
+			} catch (error) {
+				console.error("Error saving course data:", error);
+			}
+		}, 1000); // Debounce de 1 segundo
+
+		return () => clearTimeout(timeoutId);
+	}, [files, hasUserChanges, preserveProgress, courseStorageKey, lessonId, isInitialized]);
 
 	const updateFile = (filename: string, content: string) => {
 		setFiles((prev) => ({
 			...prev,
 			[filename]: content,
 		}));
+		// Marcar que o usuário fez mudanças (para trigger do save)
+		if (preserveProgress) {
+			setHasUserChanges(true);
+		}
 	};
 
 	const addNewFile = () => {
@@ -65,6 +115,10 @@ export default function CodeEditor({
 				[fileName]: "// Novo arquivo\n",
 			}));
 			setActiveFile(fileName);
+			// Marcar que o usuário fez mudanças
+			if (preserveProgress) {
+				setHasUserChanges(true);
+			}
 		}
 	};
 
@@ -80,12 +134,31 @@ export default function CodeEditor({
 		if (activeFile === filename) {
 			setActiveFile(Object.keys(remaining)[0]);
 		}
+
+		// Marcar que o usuário fez mudanças
+		if (preserveProgress) {
+			setHasUserChanges(true);
+		}
 	};
 
 	const resetFiles = () => {
 		if (confirm("Tem certeza que deseja resetar todos os arquivos?")) {
+			if (preserveProgress) {
+				// Para seção do usuário, remover apenas esta lição do curso
+				try {
+					const existingData = localStorage.getItem(courseStorageKey);
+					if (existingData) {
+						const courseData = JSON.parse(existingData);
+						delete courseData[lessonId];
+						localStorage.setItem(courseStorageKey, JSON.stringify(courseData));
+					}
+				} catch (error) {
+					console.error("Error clearing lesson data:", error);
+				}
+			}
 			setFiles(initialFiles);
 			setActiveFile(Object.keys(initialFiles)[0]);
+			setHasUserChanges(false);
 		}
 	};
 
