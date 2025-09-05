@@ -75,28 +75,30 @@ const ctx = canvas.getContext("2d");
 
 	return (
 		<>
-			{/* Global Refresh Button */}
-			<div className="flex justify-end mb-4">
-				<button
-					onClick={refetch}
-					disabled={loading}
-					className={`px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md transition-colors ${
-						loading
-							? "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
-							: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-					}`}
-					title={loading ? "Atualizando arquivos..." : "Recarregar arquivos de ambas as seções"}
-				>
-					{loading ? (
-						<>
-							<div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
-							Atualizando arquivos...
-						</>
-					) : (
-						<>🔄 Atualizar arquivos</>
-					)}
-				</button>
-			</div>
+			{/* Global Refresh Button - Only in development */}
+			{process.env.NODE_ENV === "development" && (
+				<div className="flex justify-end mb-4">
+					<button
+						onClick={refetch}
+						disabled={loading}
+						className={`px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md transition-colors ${
+							loading
+								? "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
+								: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+						}`}
+						title={loading ? "Atualizando arquivos..." : "Recarregar arquivos de ambas as seções"}
+					>
+						{loading ? (
+							<>
+								<div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
+								Atualizando arquivos...
+							</>
+						) : (
+							<>🔄 Atualizar arquivos</>
+						)}
+					</button>
+				</div>
+			)}
 
 			{/* Seção de Código de Exemplo */}
 			<section className="mb-12">
