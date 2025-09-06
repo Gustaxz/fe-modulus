@@ -7,7 +7,7 @@ Você pode acessar o projeto [aqui](https://modulus-pi.vercel.app/).
 
 ## Quero criar um curso
 
-O Modulus é um projeto open source, então você pode criar seus cursos do jeito que você quiser. Se deseja que ele apareça no site, basta criar um pull request com o seu curso que vamos analisar e aprovar.
+O Modulus é um projeto open source, então você pode criar seus próprios cursos. Se deseja que ele apareça no site, basta criar um pull request com o seu curso que vamos analisar e aprovar.
 
 ### Como criar um novo curso (passo a passo)
 
