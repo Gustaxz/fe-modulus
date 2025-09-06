@@ -1,5 +1,7 @@
 ## Modulus
 
+![Modulus](https://github.com/Gustaxz/fe-modulus/blob/master/.github/banner.png)
+
 Bem vindo ao Modulus! A ideia desse projeto é ser um espaço para aprendizagem de como bibliotecas de front-end javascript funcionam por baixo dos panos, com um espaço com códigos de exemplo e uma área para você treinar.
 
 Você pode acessar o projeto [aqui](https://modulus-pi.vercel.app/).
