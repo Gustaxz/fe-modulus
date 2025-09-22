@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Canvas Confetti - Code Output</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 20px;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				background: #f8f9fa;
+			}
+			canvas {
+				border: 2px solid #e9ecef;
+				border-radius: 8px;
+				background: white;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.error {
+				background: #ffe6e6;
+				border: 1px solid #ff9999;
+				color: #d63384;
+				padding: 10px;
+				border-radius: 6px;
+				margin: 10px 0;
+				font-family: "Monaco", "Menlo", monospace;
+				font-size: 14px;
+			}
+			.console-output {
+				background: #f8f9fa;
+				border: 1px solid #dee2e6;
+				padding: 10px;
+				border-radius: 6px;
+				margin: 10px 0;
+				font-family: "Monaco", "Menlo", monospace;
+				font-size: 14px;
+				max-height: 200px;
+				overflow-y: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="400" height="300"></canvas>
+		<div id="console"></div>
+
+		<script>
+			// Capturar console.log
+			const consoleDiv = document.getElementById("console");
+			const originalLog = console.log;
+			const originalError = console.error;
+
+			console.log = function (...args) {
+				const message = args
+					.map((arg) => (typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg)))
+					.join(" ");
+
+				const logDiv = document.createElement("div");
+				logDiv.textContent = "> " + message;
+				logDiv.style.marginBottom = "5px";
+				consoleDiv.appendChild(logDiv);
+
+				originalLog.apply(console, args);
+			};
+
+			console.error = function (...args) {
+				const message = args.map((arg) => String(arg)).join(" ");
+				const errorDiv = document.createElement("div");
+				errorDiv.className = "error";
+				errorDiv.textContent = "Error: " + message;
+				consoleDiv.appendChild(errorDiv);
+
+				originalError.apply(console, args);
+			};
+
+			// Capturar erros JavaScript
+			window.onerror = function (message, source, lineno, colno, error) {
+				const errorDiv = document.createElement("div");
+				errorDiv.className = "error";
+				errorDiv.textContent = `Error (line ${lineno}): ${message}`;
+				consoleDiv.appendChild(errorDiv);
+				return true;
+			};
+
+			try {
+				/* USER_CODE_PLACEHOLDER */
+			} catch (error) {
+				console.error(error.message);
+			}
+		</script>
+	</body>
+</html>
