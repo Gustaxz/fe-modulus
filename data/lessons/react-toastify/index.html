@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Canvas Confetti - Code Output</title>
+		<style>
+			#toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Espaço entre as notificações */
+      }
+
+      /* Estilo padrão de cada notificação */
+      .toast {
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        /* Animação de entrada e saída */
+        transition: all 0.5s;
+      }
+
+      /* Animação para quando a notificação vai desaparecer */
+      .toast.fade-out {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      /* Cor para notificação de sucesso */
+      .toast.success {
+        background-color: #28a745;
+      }
+
+      /* Cor para notificação de erro */
+      .toast.error {
+        background-color: #dc3545;
+      }
+		</style>
+	</head>
+	<body>
+    <h1>Simulador de Notificações</h1>
+    
+    <div class="buttons">
+        <button id="successBtn">Mostrar Sucesso</button>
+        <button id="errorBtn">Mostrar Erro</button>
+    </div>
+
+    <div id="toast-container"></div>
+
+		<script>
+			// Capturar console.log
+			const consoleDiv = document.getElementById("console");
+			const originalLog = console.log;
+			const originalError = console.error;
+
+			console.log = function (...args) {
+				const message = args
+					.map((arg) => (typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg)))
+					.join(" ");
+
+				const logDiv = document.createElement("div");
+				logDiv.textContent = "> " + message;
+				logDiv.style.marginBottom = "5px";
+				consoleDiv.appendChild(logDiv);
+
+				originalLog.apply(console, args);
+			};
+
+			console.error = function (...args) {
+				const message = args.map((arg) => String(arg)).join(" ");
+				const errorDiv = document.createElement("div");
+				errorDiv.className = "error";
+				errorDiv.textContent = "Error: " + message;
+				consoleDiv.appendChild(errorDiv);
+
+				originalError.apply(console, args);
+			};
+
+			// Capturar erros JavaScript
+			window.onerror = function (message, source, lineno, colno, error) {
+				const errorDiv = document.createElement("div");
+				errorDiv.className = "error";
+				errorDiv.textContent = `Error (line ${lineno}): ${message}`;
+				consoleDiv.appendChild(errorDiv);
+				return true;
+			};
+
+			try {
+				/* USER_CODE_PLACEHOLDER */
+			} catch (error) {
+				console.error(error.message);
+			}
+		</script>
+	</body>
+</html>

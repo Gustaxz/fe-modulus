@@ -1,4 +1,5 @@
 import { createCanvasConfettiLessons } from "../lessons/canvas-confetti";
+import { createReactToastifyLessons } from "../lessons/react-toastify";
 
 export interface Lesson {
   id: string;
@@ -23,6 +24,12 @@ export const courses: Course[] = [
     description: "Aprenda a recriar a biblioteca Canvas Confetti, uma biblioteca de efeitos de confete para o Canvas HTML5",
     lessons: createCanvasConfettiLessons()
   },
+  {
+    id: "react-toastify",
+    title: "Recriando a biblioteca React Toastify",
+    description: "Neste tutorial, vamos recriar a famosa biblioteca de notificações react-toastify usando apenas HTML, CSS e JavaScript.",
+    lessons: createReactToastifyLessons()
+  }
 ]
 
 
